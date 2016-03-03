@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxMaxim.h"
+#include "ofxImageSequence.h"
 
 class ofApp : public ofBaseApp {
 
@@ -25,12 +25,15 @@ public:
 
 	//Contain videos
 	vector <ofVideoPlayer> videos;
+	ofTexture preview;
+	unsigned char * pixelout;
 
 	int i; //Iterator
 	int s; //size
-
+	int width, height;
 
 	bool skip[9]; //Skips updates
+	bool write = false;//writes frames to preview
 
 
 };
