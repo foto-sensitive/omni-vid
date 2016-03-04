@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxImageSequence.h"
+#include "ofxImageSequenceRecorder.h"
 
 class ofApp : public ofBaseApp {
 
@@ -21,13 +22,16 @@ public:
 	void dragEvent(ofDragInfo info);
 	void gotMessage(ofMessage msg);
 	double phasor(double frequency, double startphase, double endphase);
+	void exit();
 
 	string path; //Path of dragged file
 
 	//Contain videos
 	vector <ofVideoPlayer> videos;
-	ofTexture preview;
+	ofImage preview;
+	ofImage test;
 	unsigned char * pixelout;
+	unsigned char * pixelin;
 
 	int i; //Iterator
 	int s; //size
@@ -39,4 +43,9 @@ public:
 	ofxImageSequence sequence;
 	bool playing;
 	double phase;
+
+	//Recorder
+	ofxImageSequenceRecorder recorder;
+	bool rec;
+	bool allocate = false;
 };
