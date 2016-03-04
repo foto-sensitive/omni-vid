@@ -20,6 +20,7 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo info);
 	void gotMessage(ofMessage msg);
+	double phasor(double frequency, double startphase, double endphase);
 
 	string path; //Path of dragged file
 
@@ -35,5 +36,7 @@ public:
 	bool skip[9]; //Skips updates
 	bool write = false;//writes frames to preview
 
-
+	ofxImageSequence sequence;
+	bool playing;
+	double phase;
 };
