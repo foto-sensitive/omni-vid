@@ -48,4 +48,8 @@ public:
 	ofxImageSequenceRecorder recorder;
 	bool rec;
 	bool allocate = false;
+	bool sequenced = false;
+
+
+	ofDirectory dir;
 };
