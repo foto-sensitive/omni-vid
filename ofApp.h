@@ -1,55 +1,37 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxImageSequence.h"
-#include "ofxImageSequenceRecorder.h"
+#include "ofxGui.h"
 
-class ofApp : public ofBaseApp {
+class ofApp : public ofBaseApp{
 
-public:
-	~ofApp();/* destructor is very useful */
-	void setup();
-	void update();
-	void draw();
+	public:
+		void setup();
+		void update();
+		void draw();
 
-	void keyPressed(int key);
-	void keyReleased(int key);
-	void mouseMoved(int x, int y);
-	void mouseDragged(int x, int y, int button);
-	void mousePressed(int x, int y, int button);
-	void mouseReleased(int x, int y, int button);
-	void windowResized(int w, int h);
-	void dragEvent(ofDragInfo info);
-	void gotMessage(ofMessage msg);
-	double phasor(double frequency, double startphase, double endphase);
-	void exit();
+		void keyPressed(int key);
+		void keyReleased(int key);
+		void mouseMoved(int x, int y );
+		void mouseDragged(int x, int y, int button);
+		void mousePressed(int x, int y, int button);
+		void mouseReleased(int x, int y, int button);
+		void mouseEntered(int x, int y);
+		void mouseExited(int x, int y);
+		void windowResized(int w, int h);
+		void dragEvent(ofDragInfo dragInfo);
+		void gotMessage(ofMessage msg);
 
-	string path; //Path of dragged file
+		ofVideoPlayer video[2];
+		ofTexture filter;
 
-	//Contain videos
-	vector <ofVideoPlayer> videos;
-	ofImage preview;
-	ofImage test;
-	unsigned char * pixelout;
-	unsigned char * pixelin;
+		int width, height;
 
-	int i; //Iterator
-	int s; //size
-	int width, height;
-
-	bool skip[9]; //Skips updates
-	bool write = false;//writes frames to preview
-
-	ofxImageSequence sequence;
-	bool playing;
-	double phase;
-
-	//Recorder
-	ofxImageSequenceRecorder recorder;
-	bool rec;
-	bool allocate = false;
-	bool sequenced = false;
-
-
-	ofDirectory dir;
+		unsigned char * pixels;
+		unsigned char * pixelout;
+		unsigned char * lastPixels;
+		
+		//GUI
+		ofxPanel gui;
+		ofxToggle red, green, blue;
 };

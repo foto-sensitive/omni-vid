@@ -1,184 +1,126 @@
-/* This is an example of how to integrate maximilain into openFrameworks,
-including using audio received for input and audio requested for output.
-You can copy and paste this and use it as a starting example.
-*/
-
-
-
 #include "ofApp.h"
 
+//--------------------------------------------------------------
+void ofApp::setup(){
 
-//-------------------------------------------------------------
-ofApp::~ofApp() {
+	video[0].loadMovie("04.m2t");
+	video[1].loadMovie("mandlebulb.avi");
 
+	for (int i = 0; i < 2; i++) {
+		video[i].play();
+		video[i].setLoopState(OF_LOOP_NORMAL);
+	}
+
+	width = (int)video[1].getWidth();
+	height = (int)video[1].getHeight();
+
+	pixelout = new unsigned char[width*height * 4];//Assigns length to array
+	lastPixels = new unsigned char[width*height * 4];
+
+	//GUI
+	gui.setup(); // most of the time you don't need a name
+	gui.add(red.setup("Red", false));
+	gui.add(green.setup("Green", false));
+	gui.add(blue.setup("Blue", false));
 
 }
 
 //--------------------------------------------------------------
-void ofApp::setup() {
+void ofApp::update(){
 
-	//Initilises recorder as false
-	rec = false;
+	ofBackground(0,255,0);
 
-	recorder.setPrefix(ofToDataPath("recording1/frame")); // this directory must already exist
-	recorder.setFormat("bmp"); // png is really slow but high res, bmp is fast but big, jpg is just right
+	for (int i = 0; i < 2; i++)
+	video[i].update();
 
-}
+	//only try and process video when we have a new frame.
+	if (video[1].isFrameNew()) {
+		pixels = video[1].getPixels();
 
-//--------------------------------------------------------------
-void ofApp::update() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				pixelout[(j*width + i) * 4 + 0] = pixels[(j*width + i) * 3 + 0];//red
+				pixelout[(j*width + i) * 4 + 1] = pixels[(j*width + i) * 3+ 1];//green
+				pixelout[(j*width + i) * 4 + 2] = pixels[(j*width + i) * 3 + 2];//blue
+				
+				if((pixelout[(j*width + i) * 4 + 0] > 200 && red) ||
+					(pixelout[(j*width + i) * 4 + 1] > 200 && green) ||
+					(pixelout[(j*width + i) * 4 + 2] > 200 && blue)   )
 
-	for (i = 0; i < videos.size(); i++)
+				pixelout[(j*width + i) * 4 + 3] = 0;
 
-		if (!skip[i])//Skips video if update disabled
-			videos[i].update();
+				else pixelout[(j*width + i) * 4 + 3] = 255;
 
-	if (videos.size() > 0) {
-
-		width = videos[0].getWidth();
-		height = videos[0].getHeight();
-
-		if (!allocate) {
-			pixelout = new unsigned char[width*height * 3];//Assigns length to array
-			pixelin = new unsigned char[width*height * 3];
-			allocate = true;
-		}
-
-		for (int u = 0; u < videos.size(); u++) {
-			if (videos[u].isFrameNew() && rec) {
-
-				pixelin = videos[u].getPixels();//Gets pixels from video
-
-				for (int i = 0; i < width; i++) {
-					for (int j = 0; j < height; j++) { //Writes pixels if chroma trheshold hasn't been reached, otherwise assumes from previous frame
-						if (u == 0 || pixelin[(j*width + i) * 3 + 1]<250 && u > 0) {
-							pixelout[(j*width + i) * 3 + 0] = pixelin[(j*width + i) * 3 + 0];//red
-							pixelout[(j*width + i) * 3 + 1] = pixelin[(j*width + i) * 3 + 1];//green
-							pixelout[(j*width + i) * 3 + 2] = pixelin[(j*width + i) * 3 + 2];//blue
-						}
-					}
-				}		
-				preview.setFromPixels(pixelout, width, height, OF_IMAGE_COLOR);//Writes pixels to preview sequence
 			}
 		}
-		//Outside of loop to make sure final edit is layered correctly
-		recorder.addFrame(preview);
-	}
-}
-
-//--------------------------------------------------------------
-void ofApp::draw() {
-
-	ofBackground(125);
-	ofSetColor(255);
 
 
-	for (i = 0; i < videos.size(); i++)
-		videos[i].draw((ofGetWidth() / videos.size()*i), 0, ofGetWidth() / videos.size(), ofGetHeight() / videos.size());
-
-
-	if (videos.size() > 0) { //If there are videos preform recording functions
-		if (recorder.isThreadRunning() && videos[0].getPosition() > 0.99) { //Stops recording if ran out of frames
-			
-			recorder.stopThread();
-			rec = false;
-
-			//Get directory size
-			dir.listDir("recording1");
-
-			sequence.loadSequence("recording1/frame", "bmp", 0, dir.size()-1, 4);
-			sequence.preloadAllFrames();	//this way there is no stutter when loading frames
-			sequence.setFrameRate(30); //set to ten frames per second
-			sequenced = true; //Plays sequence when it has been written
-
-			for (int j = 0; j < videos.size(); j++) 
-				skip[j] = true; //Prevents original videos from playing because composite has loaded, saving memory
-		}
+		filter.loadData(pixelout, width, height, GL_RGBA);
 	}
 
-	if(sequenced)
-	sequence.getFrameAtPercent(phasor(0.09, 0, 1))->draw(ofGetWidth()*0.5, ofGetHeight()*0.5, ofGetWidth()*0.5, ofGetHeight()*0.5);
-	
-}
-
-void ofApp::exit() {
-	recorder.waitForThread();
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
-	
-	if (key == 'r') {
-		recorder.setCounter(0);
-		for (i = 0; i < videos.size(); i++)
-			videos[i].setFrame(0);
-		rec = true;
-		recorder.startThread(false, true);
+void ofApp::draw(){
 
+	video[0].draw(0, 0, ofGetWidth(), ofGetHeight());
+	filter.draw(0, 0, ofGetWidth(), ofGetHeight());
 
-		for (int j = 0; j < videos.size(); j++)
-			skip[j] = false;
-	}
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key) {
+	gui.draw();
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y) {
+void ofApp::keyPressed(int key){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button) {
+void ofApp::keyReleased(int key){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {
+void ofApp::mouseMoved(int x, int y ){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button) {
+void ofApp::mouseDragged(int x, int y, int button){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {
+void ofApp::mousePressed(int x, int y, int button){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg) {
+void ofApp::mouseReleased(int x, int y, int button){
 
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo info) {
-
-	//Gets video path
-	path = info.files[0];
-
-	//Creates new video player
-	ofVideoPlayer player;
-	player.loadMovie(path);
-	player.setLoopState(OF_LOOP_NORMAL);
-	player.play();
-	videos.push_back(player);
+void ofApp::mouseEntered(int x, int y){
 
 }
 
 //--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
-double ofApp::phasor(double frequency, double startphase, double endphase) {
-	//This is a phasor that takes a value for the start and end of the ramp. 
-	if (phase<startphase) {
-		phase = startphase;
-	}
-	if (phase >= endphase) phase = startphase;
-	phase += ((endphase - startphase) / (1 / (frequency)));
-	return(phase);
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::dragEvent(ofDragInfo dragInfo){ 
+
 }
