@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxImageSequence.h"
 #include "ofxImageSequenceRecorder.h"
+#include "ofxFirstPersonCamera.h"
 
 class ofApp : public ofBaseApp {
 
@@ -22,6 +23,9 @@ public:
 	void dragEvent(ofDragInfo info);
 	void gotMessage(ofMessage msg);
 	double phasor(double frequency, double startphase, double endphase);
+	void wrapSphere();
+	void addNewFrame();
+	void cycle();
 	void exit();
 
 	string path; //Path of dragged file
@@ -29,30 +33,37 @@ public:
 				 //Contain videos
 	vector <ofVideoPlayer> videos;
 	ofImage preview;
-	ofImage test;
+
 	unsigned char * pixelout;
 	unsigned char * pixelin;
+	unsigned char * pixels;
 
 	int i; //Iterator
 	int s; //size
 	int width, height;
+	int thre; //Threshold for chroma
 
 	bool skip[9]; //Skips updates
 	bool write = false;//writes frames to preview
 
 	ofxImageSequence sequence;
-	bool playing;
 	double phase;
 
 	//Recorder
 	ofxImageSequenceRecorder recorder;
-	bool rec;
+	bool rec = false;
 	bool allocate = false;
 	bool sequenced = false;
 	bool newFrame = false;
-	bool cycle = false;
+	bool cycleOn = false;
 	bool preLoad = false;
+	bool toggle = false;
 
 
 	ofDirectory dir;
+
+
+	//360 Vision
+	GLUquadricObj *quadric;
+	ofxFirstPersonCamera cam;
 };
