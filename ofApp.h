@@ -38,7 +38,7 @@ public:
 	unsigned char * pixelin;
 	unsigned char * pixels;
 
-	int i; //Iterator
+	int i, j, u; //Iterators
 	int s; //size
 	int width, height;
 	int thre; //Threshold for chroma

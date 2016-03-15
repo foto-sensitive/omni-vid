@@ -233,12 +233,12 @@ void ofApp::wrapSphere() {
 //--------------------------------------------------------------
 void ofApp::addNewFrame() {
 
-	for (int u = 0; u < videos.size(); u++) {
+	for (u = 0; u < videos.size(); u++) {
 		if (rec) {
 			pixelin = videos[u].getPixels();//Gets pixels from video
 
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) { //Writes pixels if chroma trheshold hasn't been reached, otherwise assumes from previous frame
+			for (i = 0; i < width; i++) {
+				for (j = 0; j < height; j++) { //Writes pixels if chroma trheshold hasn't been reached, otherwise assumes from previous frame
 
 
 					thre = 254;
@@ -266,7 +266,7 @@ void ofApp::cycle() { //cycle throguh all the frames starting at 0 for recording
 		videos[i].nextFrame();
 		newFrame = true;
 
-		if (videos[0].getCurrentFrame() >= videos[0].getTotalNumFrames()) {
+		if (videos[0].getCurrentFrame() >= videos[0].getTotalNumFrames() || videos[0].getPosition() >= 0.99) {
 			videos[i].setFrame(0);
 			cycleOn = false;
 			preLoad = true;
