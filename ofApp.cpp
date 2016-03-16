@@ -22,6 +22,27 @@ void ofApp::setup() {
 	//Recorder initlisers
 	recorder.setPrefix(ofToDataPath("recording1/frame")); // this directory must already exist
 	recorder.setFormat("bmp"); // png is really slow but high res, bmp is fast but big, jpg is just right
+
+
+
+
+
+
+	recorder.stopThread();
+	rec = false;
+
+	//Get directory size
+	dir.listDir("recording1");
+
+	sequence.loadSequence("recording1/frame", "bmp", 0, dir.size() - 1, 4);
+	sequence.preloadAllFrames();	//this way there is no stutter when loading frames
+	sequence.setFrameRate(5); //set to ten frames per second
+	sequenced = true; //Plays sequence when it has been written
+
+	for (int j = 0; j < videos.size(); j++)
+		skip[j] = true; //Prevents original videos from playing because composite has loaded, saving memory
+
+	preLoad = false;
 }
 
 //--------------------------------------------------------------
@@ -98,6 +119,7 @@ void ofApp::draw() {
 		wrapSphere();
 		cam.end();
 	}
+
 
 }
 
@@ -241,9 +263,9 @@ void ofApp::addNewFrame() {
 				for (j = 0; j < height; j++) { //Writes pixels if chroma trheshold hasn't been reached, otherwise assumes from previous frame
 
 
-					thre = 254;
+ 					thre = 160;
 
-					if (u == 0 || pixelin[(j*width + i) * 3 + 1] < thre) {
+					if (u == 0 || pixelin[(j*width + i) * 3 + 1] < thre || pixelin[(j*width + i) * 3 + 2] > 150) {
 						pixelout[(j*width + i) * 3 + 0] = pixelin[(j*width + i) * 3 + 0];//red
 						pixelout[(j*width + i) * 3 + 1] = pixelin[(j*width + i) * 3 + 1];//green
 						pixelout[(j*width + i) * 3 + 2] = pixelin[(j*width + i) * 3 + 2];//blue
