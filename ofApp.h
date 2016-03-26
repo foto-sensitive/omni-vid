@@ -1,69 +1,38 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxImageSequence.h"
-#include "ofxImageSequenceRecorder.h"
-#include "ofxFirstPersonCamera.h"
 
-class ofApp : public ofBaseApp {
+class ofApp : public ofBaseApp{
 
-public:
-	~ofApp();/* destructor is very useful */
-	void setup();
-	void update();
-	void draw();
+	public:
+		void setup();
+		void update();
+		void draw();
 
-	void keyPressed(int key);
-	void keyReleased(int key);
-	void mouseMoved(int x, int y);
-	void mouseDragged(int x, int y, int button);
-	void mousePressed(int x, int y, int button);
-	void mouseReleased(int x, int y, int button);
-	void windowResized(int w, int h);
-	void dragEvent(ofDragInfo info);
-	void gotMessage(ofMessage msg);
-	double phasor(double frequency, double startphase, double endphase);
-	void wrapSphere();
-	void addNewFrame();
-	void cycle();
-	void exit();
+		void keyPressed(int key);
+		void keyReleased(int key);
+		void mouseMoved(int x, int y );
+		void mouseDragged(int x, int y, int button);
+		void mousePressed(int x, int y, int button);
+		void mouseReleased(int x, int y, int button);
+		void mouseEntered(int x, int y);
+		void mouseExited(int x, int y);
+		void windowResized(int w, int h);
+		void dragEvent(ofDragInfo dragInfo);
+		void gotMessage(ofMessage msg);
 
-	string path; //Path of dragged file
+		int incX = 0;
+		int incY = 0;
 
-				 //Contain videos
-	vector <ofVideoPlayer> videos;
-	ofImage preview;
+		int x, y;
+	
+		//Easing
+		float easing = 0.005;
+		float targetX, targetY, dx, dy;
 
-	unsigned char * pixelout;
-	unsigned char * pixelin;
-	unsigned char * pixels;
+		int centerX, centerY;
 
-	int i, j, u; //Iterators
-	int s; //size
-	int width, height;
-	int thre; //Threshold for chroma
-
-	bool skip[9]; //Skips updates
-	bool write = false;//writes frames to preview
-
-	ofxImageSequence sequence;
-	double phase;
-
-	//Recorder
-	ofxImageSequenceRecorder recorder;
-	bool rec = false;
-	bool allocate = false;
-	bool sequenced = false;
-	bool newFrame = false;
-	bool cycleOn = false;
-	bool preLoad = false;
-	bool toggle = false;
-
-
-	ofDirectory dir;
-
-
-	//360 Vision
-	GLUquadricObj *quadric;
-	ofxFirstPersonCamera cam;
+		bool dont = false;
+		bool doit = false;
+		
 };
