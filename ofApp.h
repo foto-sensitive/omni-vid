@@ -20,6 +20,10 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+		void wrapSphere(int s, ofTexture tex, float mag);
+
+		ofTexture tex, tex2;
+		ofImage img;
 
 		int incX = 0;
 		int incY = 0;
@@ -27,12 +31,22 @@ class ofApp : public ofBaseApp{
 		int x, y;
 	
 		//Easing
-		float easing = 0.005;
+		float easing = 0.025;
 		float targetX, targetY, dx, dy;
 
 		int centerX, centerY;
 
+		int width, height;
+
 		bool dont = false;
 		bool doit = false;
+
+		//360 Vision
+		GLUquadricObj *quadric;
+
+		unsigned char * pixelout;
+		unsigned char * pixelin;
+
+		int thre, pointer, red, green, blue;
 		
 };
