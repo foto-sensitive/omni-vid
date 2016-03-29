@@ -60,7 +60,17 @@ void ofApp::setup(){
 
 	tex2.loadData(pixelout, width, height, GL_RGBA);
 
+	//Get directory size
+	dir.listDir("seq2");
 
+	sequence.loadSequence("seq2/frame", "png", 1, dir.size() - 1, 4);
+	sequence.preloadAllFrames();	//this way there is no stutter when loading frames
+	sequence.setFrameRate(5); //set to ten frames per second
+
+
+	bg.loadMovie("cell.avi");
+	bg.setLoopState(OF_LOOP_NORMAL);
+	bg.play();
 }
 
 //--------------------------------------------------------------
@@ -77,19 +87,23 @@ void ofApp::update(){
 	dont = false;
 
 	//X easing
-	dx = targetX - x;
-	x += dx*easing;
+	//dx = targetX - x;
+	//x += dx*easing;
+	x = ofLerp(x, targetX, 0.05);
 
 	//Y easing
-	dy = targetY - y;
-	y += dy*easing;
+	//dy = targetY - y;
+	//y += dy*easing;
+	y = ofLerp(y, targetY, 0.05);
+
+	bg.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	wrapSphere(300, tex, 1);
-	wrapSphere(200, tex2, 2);
+	wrapSphere(300, tex, 1, 0);
+	wrapSphere(200, tex, 2, 1);
 
 	targetX += incX*0.75;
 	targetY += incY*0.67;
@@ -107,15 +121,24 @@ void ofApp::draw(){
 	incX = 0;
 	incY = 0;
 
+    //Plays image sequence
+	sequence.getFrameAtPercent(phasor(0.005, 0, 1))->draw(0, 0, 0, 0);
+
+
 
 }
 
 //--------------------------------------------------------------
-void ofApp::wrapSphere(int s, ofTexture tex, float mag) {
+void ofApp::wrapSphere(int s, ofTexture tex, float mag, int i) {
+
 
 	ofSetColor(255, 255, 255);
 
-	tex.bind();
+	if(i == 0)
+	bg.getTextureReference().bind();
+
+	if (i == 1)
+	sequence.getTextureReference().bind();
 
 	ofPushMatrix();
 
@@ -141,7 +164,11 @@ void ofApp::wrapSphere(int s, ofTexture tex, float mag) {
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 
-	tex.unbind();
+	if (i == 0)
+	bg.getTextureReference().unbind();
+
+	if (i == 1)
+	sequence.getTextureReference().unbind();
 
 	ofPopMatrix();
 }
@@ -207,4 +234,22 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+//--------------------------------------------------------------
+
+double ofApp::phasor(double frequency, double startphase, double endphase) {
+	//This is a phasor that takes a value for the start and end of the ramp. 
+	if (phase<startphase) {
+		phase = startphase;
+	}
+	if (phase >= endphase) phase = startphase;
+	phase += ((endphase - startphase) / (1 / (frequency)));
+	return(phase);
+}
+
+//--------------------------------------------------------------
+
+float ofApp::ofLerp(float start, float stop, float amt) {
+	return start + (stop - start) * amt;
 }

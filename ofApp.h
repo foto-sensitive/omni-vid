@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxImageSequence.h"
+#include "ofxImageSequenceRecorder.h"
 
 class ofApp : public ofBaseApp{
 
@@ -20,7 +22,11 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		void wrapSphere(int s, ofTexture tex, float mag);
+		void wrapSphere(int s, ofTexture tex, float mag, int i);
+		double phasor(double frequency, double startphase, double endphase);
+		float ofLerp(float start, float stop, float amt);
+
+		ofVideoPlayer bg;
 
 		ofTexture tex, tex2;
 		ofImage img;
@@ -48,5 +54,11 @@ class ofApp : public ofBaseApp{
 		unsigned char * pixelin;
 
 		int thre, pointer, red, green, blue;
+
+
+		//Sequencing Images
+		ofxImageSequence sequence;
+		ofDirectory dir;
+		double phase;
 		
 };
