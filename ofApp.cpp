@@ -20,11 +20,11 @@ void ofApp::setup(){
 
 	ofHideCursor();
 
-	img.loadImage("palace.bmp");
+	img.loadImage("forest.bmp");
 
 	tex.loadData(img);
 
-	img.loadImage("souls.bmp");
+
 
 	width = img.getWidth();
 	height = img.getHeight();
@@ -63,14 +63,14 @@ void ofApp::setup(){
 	//Get directory size
 	dir.listDir("seq2");
 
-	sequence.loadSequence("seq2/frame", "png", 1, dir.size() - 1, 4);
+	sequence.loadSequence("seq2/frame", "png", 5, dir.size() - 1, 4);
 	sequence.preloadAllFrames();	//this way there is no stutter when loading frames
 	sequence.setFrameRate(5); //set to ten frames per second
 
 
-	bg.loadMovie("cell.avi");
-	bg.setLoopState(OF_LOOP_NORMAL);
-	bg.play();
+	//bg.loadMovie("cell.avi");
+	//bg.setLoopState(OF_LOOP_NORMAL);
+	//bg.play();
 }
 
 //--------------------------------------------------------------
@@ -87,23 +87,23 @@ void ofApp::update(){
 	dont = false;
 
 	//X easing
-	//dx = targetX - x;
-	//x += dx*easing;
-	x = ofLerp(x, targetX, 0.05);
+	dx = targetX - x;
+	x += dx*easing;
+	x = ofLerp(x, targetX, 0.0015);
 
 	//Y easing
-	//dy = targetY - y;
-	//y += dy*easing;
-	y = ofLerp(y, targetY, 0.05);
+	dy = targetY - y;
+	y += dy*easing;
+	y = ofLerp(y, targetY, 0.0015);
 
-	bg.update();
+	//bg.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
 	wrapSphere(300, tex, 1, 0);
-	wrapSphere(200, tex, 2, 1);
+	wrapSphere(200, tex, 1, 1);
 
 	targetX += incX*0.75;
 	targetY += incY*0.67;
@@ -134,8 +134,8 @@ void ofApp::wrapSphere(int s, ofTexture tex, float mag, int i) {
 
 	ofSetColor(255, 255, 255);
 
-	if(i == 0)
-	bg.getTextureReference().bind();
+	if (i == 0)
+		tex.bind();
 
 	if (i == 1)
 	sequence.getTextureReference().bind();
@@ -165,7 +165,7 @@ void ofApp::wrapSphere(int s, ofTexture tex, float mag, int i) {
 	glMatrixMode(GL_MODELVIEW);
 
 	if (i == 0)
-	bg.getTextureReference().unbind();
+		tex.unbind();
 
 	if (i == 1)
 	sequence.getTextureReference().unbind();
@@ -176,8 +176,16 @@ void ofApp::wrapSphere(int s, ofTexture tex, float mag, int i) {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	x = centerX;
-	y = centerY;
+	if (key == 'c') {
+		x = centerX;
+		y = centerY;
+	}
+
+	if (key == 'r') {
+
+		targetX += ofRandom(0, 100);
+		targetY += ofRandom(0, 100);
+	}
 }
 
 //--------------------------------------------------------------
