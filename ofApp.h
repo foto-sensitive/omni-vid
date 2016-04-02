@@ -1,8 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxImageSequence.h"
-#include "ofxImageSequenceRecorder.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp {
 
@@ -18,38 +17,39 @@ public:
 	void mouseDragged(int x, int y, int button);
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
 	void windowResized(int w, int h);
-	void dragEvent(ofDragInfo info);
+	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 	double phasor(double frequency, double startphase, double endphase);
-	void exit();
-
+	
 	string path; //Path of dragged file
 
-	//Contain videos
-	vector <ofVideoPlayer> videos;
-	ofImage preview;
-	ofImage test;
-	unsigned char * pixelout;
-	unsigned char * pixelin;
+	vector <ofVideoPlayer> videos; //Contains videos
 
-	int i; //Iterator
-	int s; //size
-	int width, height;
+	int i, j, u; //iterators
 
-	bool skip[9]; //Skips updates
-	bool write = false;//writes frames to preview
+	int red, green, blue, alpha; //pixel values
 
-	ofxImageSequence sequence;
-	bool playing;
 	double phase;
 
-	//Recorder
-	ofxImageSequenceRecorder recorder;
-	bool rec;
-	bool allocate = false;
-	bool sequenced = false;
+	int pointer; //Points to place in array
 
+	//Pixel Arrays
+	unsigned char * pixelout;
+	unsigned char * pixelin;
+	unsigned char * pixels;
 
-	ofDirectory dir;
+	int width, height; //Dimensions of image
+
+	ofTexture preview;
+
+	ofxPanel gui;
+	ofxIntSlider thre;
+	ofxIntSlider tolerence;
+
+	bool play = false; //Plays demo
+
 };
+
