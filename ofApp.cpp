@@ -8,19 +8,11 @@ void ofApp::setup(){
 	gluQuadricTexture(quadric, GL_TRUE);
 	gluQuadricNormals(quadric, GLU_SMOOTH);
 
-	centerX = ofGetWidth()*0.5;
-	centerY = ofGetHeight()*0.5;
+	for (i = 0; i < NWRAPS; i++)
+		myWrap[i].setup(quadric);
 
-	x = centerX;
-	y = centerY;
-	targetX = x;
-	targetY = y;
 
-	SetCursorPos(centerX, centerY);
-
-	ofHideCursor();
-
-	img.loadImage("forest.bmp");
+	img.loadImage("hands.png");
 
 	tex.loadData(img);
 
@@ -61,52 +53,43 @@ void ofApp::setup(){
 	tex2.loadData(pixelout, width, height, GL_RGBA);
 
 	//Get directory size
-	dir.listDir("seq2");
+	dir.listDir("seq3");
 
-	sequence.loadSequence("seq2/frame", "png", 5, dir.size() - 1, 4);
+	sequence.loadSequence("seq3/frame", "png", 0, dir.size() - 1, 4);
 	sequence.preloadAllFrames();	//this way there is no stutter when loading frames
 	sequence.setFrameRate(5); //set to ten frames per second
 
 
-	//bg.loadMovie("cell.avi");
-	//bg.setLoopState(OF_LOOP_NORMAL);
-	//bg.play();
+	bg.loadMovie("ghost_cube.avi");
+	bg.setLoopState(OF_LOOP_NORMAL);
+	bg.play();
+
+	ofSetVerticalSync(true);
+
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
-	if (!dont) {
-		SetCursorPos(centerX, centerY);
-		doit = false;
-	}
-	else {
-		doit = true;
-	}
 
-	dont = false;
+	for (i = 0; i < NWRAPS; i++)
+	myWrap[i].update();
 
-	//X easing
-	dx = targetX - x;
-	x += dx*easing;
-	x = ofLerp(x, targetX, 0.0015);
+	bg.update();
 
-	//Y easing
-	dy = targetY - y;
-	y += dy*easing;
-	y = ofLerp(y, targetY, 0.0015);
+	v1.x = ofLerp(v1.x, mouseX+translate.x, 0.005);
+	v1.y = ofLerp(v1.y, mouseY+translate.y, 0.005);
 
-	//bg.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	wrapSphere(300, tex, 1, 0);
-	wrapSphere(200, tex, 1, 1);
+	//wrapSphere(300, tex, 0.5, 0);
 
-	targetX += incX*0.75;
-	targetY += incY*0.67;
+
+	myWrap[0].draw(0, bg, 0.5, 300, v1);
+	myWrap[1].draw(1, sequence, 0.75, 200, v1);
 
 	/*
 	//Eased Circle
@@ -126,66 +109,28 @@ void ofApp::draw(){
 
 
 
+
 }
-
-//--------------------------------------------------------------
-void ofApp::wrapSphere(int s, ofTexture tex, float mag, int i) {
-
-
-	ofSetColor(255, 255, 255);
-
-	if (i == 0)
-		tex.bind();
-
-	if (i == 1)
-	sequence.getTextureReference().bind();
-
-	ofPushMatrix();
-
-	ofTranslate(ofGetWidth() / 2, 360, 650);
-	ofRotateX(-y*mag);
-	ofRotateZ(x*mag);
-
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	ofScale(tex.getWidth(), tex.getHeight());
-	glMatrixMode(GL_MODELVIEW);
-
-	glEnable(GL_DEPTH_TEST); //enable depth comparisons NEEDED FOR SPHERE DEPTH
-	ofDisableArbTex(); //needed for textures to work with gluSphe
-
-	gluSphere(quadric, s, 100, 100);
-
-	glDisable(GL_DEPTH_TEST);//disable depth comparisons NEEDED FOR FLAT MASK
-	ofEnableArbTex(); //needed for textures to work with gluSphe
-
-
-	glMatrixMode(GL_TEXTURE);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-
-	if (i == 0)
-		tex.unbind();
-
-	if (i == 1)
-	sequence.getTextureReference().unbind();
-
-	ofPopMatrix();
-}
-
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	if (key == 'c') {
-		x = centerX;
-		y = centerY;
+	if (key == OF_KEY_LEFT) {
+		translate.x -= inc;
+		v1.x = mouseX + translate.x;
+	}
+	if (key == OF_KEY_RIGHT) {
+		translate.x += inc;
+		v1.x = mouseX + translate.x;
+	}
+	if (key == OF_KEY_UP) {
+		translate.y -= inc;
+		v1.y = mouseY + translate.y;
+	}
+	if (key == OF_KEY_DOWN) {
+		translate.y += inc;
+		v1.y = mouseY + translate.y;
 	}
 
-	if (key == 'r') {
-
-		targetX += ofRandom(0, 100);
-		targetY += ofRandom(0, 100);
-	}
 }
 
 //--------------------------------------------------------------
@@ -256,8 +201,3 @@ double ofApp::phasor(double frequency, double startphase, double endphase) {
 	return(phase);
 }
 
-//--------------------------------------------------------------
-
-float ofApp::ofLerp(float start, float stop, float amt) {
-	return start + (stop - start) * amt;
-}

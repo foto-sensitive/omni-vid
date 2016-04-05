@@ -1,8 +1,11 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ovWrap.h"
 #include "ofxImageSequence.h"
 #include "ofxImageSequenceRecorder.h"
+
+#define NWRAPS 2
 
 class ofApp : public ofBaseApp{
 
@@ -22,9 +25,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		void wrapSphere(int s, ofTexture tex, float mag, int i);
 		double phasor(double frequency, double startphase, double endphase);
-		float ofLerp(float start, float stop, float amt);
 
 		ofVideoPlayer bg;
 
@@ -33,14 +34,10 @@ class ofApp : public ofBaseApp{
 
 		int incX = 0;
 		int incY = 0;
+		int inc = 10;
 
-		int x, y;
-	
-		//Easing
-		float easing = 0.025;
-		float targetX, targetY, dx, dy;
+		ofVec2f v1, translate; // v1.x is 0, v1.y is 0
 
-		int centerX, centerY;
 
 		int width, height;
 
@@ -55,10 +52,14 @@ class ofApp : public ofBaseApp{
 
 		int thre, pointer, red, green, blue;
 
+		int i, j, u; //Iterators
+
 
 		//Sequencing Images
 		ofxImageSequence sequence;
 		ofDirectory dir;
 		double phase;
+
+		ovWrap myWrap[NWRAPS];
 		
 };
