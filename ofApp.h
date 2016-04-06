@@ -26,8 +26,12 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		double phasor(double frequency, double startphase, double endphase);
+		void layers();
 
 		ofVideoPlayer bg;
+		ofVideoPlayer *vid;
+
+		int *test;
 
 		ofTexture tex, tex2;
 		ofImage img;
@@ -38,6 +42,11 @@ class ofApp : public ofBaseApp{
 
 		ofVec2f v1, translate; // v1.x is 0, v1.y is 0
 
+		char c; //for integer to character conversion
+
+		bool selected;
+
+		int sel = 0; //Layer Selection
 
 		int width, height;
 

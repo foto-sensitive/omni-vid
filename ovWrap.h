@@ -8,11 +8,11 @@ public: // place public functions or variables declarations here
 	ovWrap();  // constructor - used to initialize an object, if no properties are passed the program sets them to the default value
 		// methods, equivalent to specific functions of your class objects
 	void setup(GLUquadricObj *_quadric);	// setup method, use this to setup your object's initial state
-	void update();  // update method, used to refresh your objects properties
-	void draw(int i, ofVideoPlayer tex, float mag, int s, ofVec2f rot);    // draw method, this where you'll do the object's drawing 
-	void draw(int i, ofTexture tex, float mag, int s, ofVec2f rot);
-	void draw(int i, ofxImageSequence tex, float mag, int s, ofVec2f rot);
-	void sphere(float mag, ofVec2f res, int s, ofVec2f rot);
+	void update(ofVec2f*, bool);  // update method, used to refresh your objects properties
+	void draw(int, ofVideoPlayer *tex, float, int);    // draw method, this where you'll do the object's drawing 
+	void draw(int i, ofTexture *tex, float mag, int s);
+	void draw(int i, ofxImageSequence *tex, float mag, int s);
+	void sphere(float mag, ofVec2f res, int s);
 					// variables
 	float x;        // position
 	float y;
@@ -20,8 +20,12 @@ public: // place public functions or variables declarations here
 	float speedX;
 	int dim;        // size
 	ofColor color;  // color using ofColor type
+
+	bool once = false;; //makes sure to store prior rotation Once
 	
-	ofVec2f res;
+	ofVec2f res, *rot, store, previous;
+
+	int storeX, storeY;
 	
 	GLUquadricObj *quadric;
 	

@@ -64,6 +64,7 @@ void ofApp::setup(){
 	bg.setLoopState(OF_LOOP_NORMAL);
 	bg.play();
 
+
 	ofSetVerticalSync(true);
 
 
@@ -72,14 +73,19 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
-	for (i = 0; i < NWRAPS; i++)
-	myWrap[i].update();
+	for (i = 0; i < NWRAPS; i++) {
+		if (sel == i)
+			selected = true;
+		else selected = false;
+		myWrap[i].update(&v1, selected);
+	}
 
 	bg.update();
 
 	v1.x = ofLerp(v1.x, mouseX+translate.x, 0.005);
 	v1.y = ofLerp(v1.y, mouseY+translate.y, 0.005);
 
+	sequence.getFrameAtPercent(phasor(0.005, 0, 1))->draw(0, 0, 0, 0);
 }
 
 //--------------------------------------------------------------
@@ -88,8 +94,8 @@ void ofApp::draw(){
 	//wrapSphere(300, tex, 0.5, 0);
 
 
-	myWrap[0].draw(0, bg, 0.5, 300, v1);
-	myWrap[1].draw(1, sequence, 0.75, 200, v1);
+	myWrap[0].draw(0, &bg, 0.5, 300);
+	myWrap[1].draw(1, &sequence, 0.75, 200);
 
 	/*
 	//Eased Circle
@@ -105,11 +111,8 @@ void ofApp::draw(){
 	incY = 0;
 
     //Plays image sequence
-	sequence.getFrameAtPercent(phasor(0.005, 0, 1))->draw(0, 0, 0, 0);
-
-
-
-
+	
+	layers();
 }
 
 //--------------------------------------------------------------
@@ -130,6 +133,12 @@ void ofApp::keyPressed(int key){
 		translate.y += inc;
 		v1.y = mouseY + translate.y;
 	}
+
+		if (key == '1')
+			sel = 0;
+
+		if (key == '2')
+			sel = 1;
 
 }
 
@@ -201,3 +210,17 @@ double ofApp::phasor(double frequency, double startphase, double endphase) {
 	return(phase);
 }
 
+//--------------------------------------------------------------
+void ofApp::layers() {
+
+	for (i = 0; i < NWRAPS; i++) {
+		
+		if (sel == i)
+			ofSetColor(200, 200, 255);
+		else
+			ofSetColor(200);
+
+		ofRect(0, 30 * i, 100, 30);
+	}
+
+}

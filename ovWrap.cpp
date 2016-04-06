@@ -8,51 +8,70 @@ void ovWrap::setup(GLUquadricObj *_quadric) {
 
 }
 
-void ovWrap::update() {
+void ovWrap::update(ofVec2f *_rot, bool selected){
+
+	if (selected) {
+		
+		if (once) {
+			
+			//Doesn't do proper cacheing of coordinates, why
+			store.x = x;
+			store.y = y;
+			previous.x = _rot->x;
+			previous.y = _rot->y;
+			once = false;
+		}
+		x = _rot->x - (previous.x - store.x);
+		y = _rot->y - (previous.y - store.y);
+	}
+	else {
+		if(!once)
+		once = true;
+	}
 
 }
 
 //--------------------------------------------------------------
 
-void ovWrap::draw(int i, ofVideoPlayer tex, float mag, int s, ofVec2f rot) {
-	res.x = tex.getWidth();//Passing resolution to sphere
-	res.y = tex.getHeight();
-	tex.bind();
-	sphere(mag, res, s, rot);
-	tex.unbind();
+void ovWrap::draw(int i, ofVideoPlayer *tex, float mag, int s) {
+	res.x = tex->getWidth();//Passing resolution to sphere
+	res.y = tex->getHeight();
+	tex->bind();
+	sphere(mag, res, s);
+	tex->unbind();
 }
 
 //--------------------------------------------------------------
 
-void ovWrap::draw(int i, ofTexture tex, float mag, int s, ofVec2f rot) {
-	res.x = tex.getWidth();
-	res.y = tex.getHeight();
-	tex.bind();
-	sphere(mag, res, s, rot);
-	tex.unbind();
+void ovWrap::draw(int i, ofTexture *tex, float mag, int s) {
+	res.x = tex->getWidth();
+	res.y = tex->getHeight();
+	tex->bind();
+	sphere(mag, res, s);
+	tex->unbind();
 }
 
 //--------------------------------------------------------------
 
-void ovWrap::draw(int i, ofxImageSequence tex, float mag, int s, ofVec2f rot) {
-	res.x = tex.getWidth();
-	res.y = tex.getHeight();
-	tex.getTextureReference().bind();
-	sphere(mag, res, s, rot);
-	tex.getTextureReference().unbind();
+void ovWrap::draw(int i, ofxImageSequence *tex, float mag, int s) {
+	res.x = tex->getWidth();
+	res.y = tex->getHeight();
+	tex->getTextureReference().bind();
+	sphere(mag, res, s);
+	tex->getTextureReference().unbind();
 }
 
 
 //--------------------------------------------------------------
 
-void ovWrap::sphere(float mag, ofVec2f res, int s, ofVec2f rot) {
+void ovWrap::sphere(float mag, ofVec2f res, int s) {
 	ofSetColor(255, 255, 255);
 
 	ofPushMatrix();
 
 	ofTranslate(ofGetWidth() / 2, 360, 650);
-	ofRotateX(rot.y*mag);
-	ofRotateZ(rot.x*mag);
+	ofRotateX(y*mag);
+	ofRotateZ(x*mag);
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
