@@ -70,8 +70,8 @@ void ovWrap::sphere(float mag, ofVec2f res, int s) {
 	ofPushMatrix();
 
 	ofTranslate(ofGetWidth() / 2, 360, 650);
-	ofRotateX(y*mag);
-	ofRotateZ(x*mag);
+	ofRotateX(y*mag + ofNoise(1, ofGetFrameNum() / 12.0) * ofGetWidth()*0.001);
+	ofRotateZ(x*mag + ofNoise(2, ofGetFrameNum() / 12.0) * ofGetHeight()*0.001);
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();

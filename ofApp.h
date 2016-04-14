@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ovWrap.h"
+#include "ofxGui.h"
 #include "ofxImageSequence.h"
 #include "ofxImageSequenceRecorder.h"
 
@@ -45,6 +46,7 @@ class ofApp : public ofBaseApp{
 		char c; //for integer to character conversion
 
 		bool selected;
+		bool all = false; //All selected
 
 		int sel = 0; //Layer Selection
 
@@ -71,4 +73,10 @@ class ofApp : public ofBaseApp{
 
 		ovWrap myWrap[NWRAPS];
 		
+		ofxPanel gui;
+		ofxIntSlider xParallax;
+		ofxIntSlider yParallax;
+
+
+		int in = 0;//For noise
 };

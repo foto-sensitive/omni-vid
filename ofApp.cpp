@@ -53,21 +53,25 @@ void ofApp::setup(){
 	tex2.loadData(pixelout, width, height, GL_RGBA);
 
 	//Get directory size
-	dir.listDir("seq3");
+	dir.listDir("seq5");
 
-	sequence.loadSequence("seq3/frame", "png", 0, dir.size() - 1, 4);
+	sequence.loadSequence("seq5/frame", "png", 0, dir.size() - 1, 4);
 	sequence.preloadAllFrames();	//this way there is no stutter when loading frames
 	sequence.setFrameRate(5); //set to ten frames per second
 
 
-	bg.loadMovie("ghost_cube.avi");
+	bg.loadMovie("sci_cube.avi");
 	bg.setLoopState(OF_LOOP_NORMAL);
 	bg.play();
 
 
 	ofSetVerticalSync(true);
 
-
+	//GUI
+	gui.setup();
+	gui.add(xParallax.setup("X-Parallax", 0, -100, 100));
+	gui.add(yParallax.setup("Y-Parallax", 0, -100, 100));
+	gui.setPosition(ofGetWidth()*0.75, ofGetHeight()*0.75);
 }
 
 //--------------------------------------------------------------
@@ -77,7 +81,9 @@ void ofApp::update(){
 		if (sel == i)
 			selected = true;
 		else selected = false;
+		if(all)
 		myWrap[i].update(&v1, selected);
+		else myWrap[i].update(&v1, true);
 	}
 
 	bg.update();
@@ -110,9 +116,13 @@ void ofApp::draw(){
 	incX = 0;
 	incY = 0;
 
-    //Plays image sequence
+    //Plays image sequenc
 	
 	layers();
+
+
+
+	gui.draw();
 }
 
 //--------------------------------------------------------------
@@ -140,6 +150,26 @@ void ofApp::keyPressed(int key){
 		if (key == '2')
 			sel = 1;
 
+		if (key == ' ')
+			all = !all;
+
+		/*
+		if (key == '[') {
+			xParallax.setPosition();
+		}
+
+		if (key == ']')
+			xParallax+=1;
+			*/
+
+		//Reset rotations
+		if (key == '0') {
+			myWrap[0].x = 92;
+			myWrap[0].y = -187;
+			myWrap[1].x = 232;
+			myWrap[1].y = 843;
+
+		}
 }
 
 //--------------------------------------------------------------
@@ -220,7 +250,24 @@ void ofApp::layers() {
 		else
 			ofSetColor(200);
 
-		ofRect(0, 30 * i, 100, 30);
+		ofRect(0, 30 * i, 200, 30);
+
+		ofSetColor(0);
+
+		string s1 = "X: ";
+		string s2 = std::to_string((int)myWrap[i].x);
+		string s3 = " Y: ";
+		string s4 = std::to_string((int)myWrap[i].y);
+
+		string s = s1 + s2 + s3 + s4;
+
+		ofDrawBitmapString(s, 15, 15 + 30 * i);
+
+		in = in +.01;
+
+		ofDrawBitmapString(ofNoise(in, ofGetFrameNum() / 50.0) * ofGetWidth()*0.05 + ofGetWidth() / 2, 130, 15 + 30);
+
+		
 	}
 
 }
